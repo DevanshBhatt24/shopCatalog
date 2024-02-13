@@ -35,6 +35,6 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Shop App',
-            home: MyHomePage()));
+            home: isUser! ? MyHomePage() : SignUP()));
   }
 }
