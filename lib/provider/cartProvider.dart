@@ -33,4 +33,9 @@ class CartItems extends ChangeNotifier {
     price = double.parse(finalPrice);
     notifyListeners();
   }
+
+  void emptyCart() {
+    items = [];
+    notifyListeners();
+  }
 }

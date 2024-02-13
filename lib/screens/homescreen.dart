@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:example/components/loader.dart';
 import 'package:example/components/nearbyres.dart';
 import 'package:example/constants/text.dart';
 import 'package:example/model/product.dart';
@@ -24,11 +25,14 @@ class _MyHomePageState extends State<MyHomePage> {
   ProductData _api = ProductData();
   bool isLoading = false;
   CartItems? cartItems;
-
+  User? user;
+  Loader? loader;
   @override
   void initState() {
     // TODO: implement initState
     cartItems = Provider.of<CartItems>(context, listen: false);
+    user = Provider.of<User>(context, listen: false);
+    loader = Loader();
     setState(() {
       isLoading = true;
     });
@@ -60,16 +64,19 @@ class _MyHomePageState extends State<MyHomePage> {
     String token = sharedPreferences.getString('token')!;
     Map<String, String>? data = {'auth-token': token};
     print(data);
-    sharedPreferences.clear();
+    loader!.showLoaderDialog(context);
     var url = Uri.parse(
-      "https://0531-2401-4900-1f3a-6a50-61b0-3e44-8383-b9df.ngrok-free.app/user/logout",
+      "https://example-s8ge.onrender.com/user/logout",
     );
     var res = await http.post(url, headers: data);
     print(res.body);
-
     var extractedData = jsonDecode(res.body);
+    sharedPreferences.clear();
+    cartItems!.emptyCart();
+    user!.deleteUser();
     if (extractedData['message'] == 'Logout successful') {
       sharedPreferences.clear();
+      Navigator.pop(context);
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => Login()));
     } else {
